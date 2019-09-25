@@ -1,15 +1,28 @@
 <?php
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Factory\AppFactory;
+use Slim\Psr7\Response as PsrResponse;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 // Instantiate App
-$app = AppFactory::create();
+$app = AppFactory::create();    //$app = new \Slim\App();
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
+
+$app->add(function (Request $request, RequestHandler $handler) {    //my middleware
+    $response = $handler->handle($request);
+    $existingContent = (string) $response->getBody();
+
+    $response = new PsrResponse();
+    $response->getBody()->write('BEFORE ' . $existingContent);
+
+    return $response;
+});
+
 
 // Add routes
 $app->get('/', function (Request $request, Response $response) {
