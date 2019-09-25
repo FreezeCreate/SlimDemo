@@ -18,8 +18,11 @@ $app->get('/', function (Request $request, Response $response) {
 });
 
 $app->get('/asd', function (Request $request, Response $response, $args) {
-    $response->getBody()->write('asd');
-    return $response;
+//    $response->getBody()->write('asd');
+//    return $response;
+    $payload = json_encode(['hello' => 'world'], JSON_PRETTY_PRINT);
+    $response->getBody()->write($payload);
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->get('/hello/{name}', function (Request $request, Response $response, $args) {
